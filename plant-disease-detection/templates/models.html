@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}LeafCheck - Models{% endblock %}
+{% block content %}
+<section class="page">
+  <h1>MobileNetV2 and ResNet50, side by side</h1>
+  <p class="lede">Both models start from ImageNet weights and use the same data split, head and training schedule, so any difference comes from the backbone.</p>
+
+  {% if rows %}
+  <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th>Model</th><th>Accuracy</th><th>Top-3</th><th>Macro F1</th><th>Weighted F1</th>
+        <th>Parameters</th><th>File size</th><th>Inference</th><th>Training time</th>
+      </tr></thead>
+      <tbody>
+      {% for r in rows %}
+      <tr>
+        <th scope="row">{{ labels.get(r.model, r.model) }}</th>
+        <td>{{ '%.2f'|format(r.accuracy|float * 100) }}%</td>
+        <td>{{ '%.2f'|format(r.top3_accuracy|float * 100) }}%</td>
+        <td>{{ '%.3f'|format(r.f1_macro|float) }}</td>
+        <td>{{ '%.3f'|format(r.f1_weighted|float) }}</td>
+        <td>{{ r.params_millions }} M</td>
+        <td>{{ r.size_mb }} MB</td>
+        <td>{{ r.inference_ms }} ms/image</td>
+        <td>{{ (r.train_time_s|float / 60)|round(1) }} min</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if has_cmp_fig %}<img class="fig" src="{{ url_for('results_file', filename='model_comparison.png') }}" alt="Bar charts comparing the two models">{% endif %}
+  {% for m, f in figures %}
+  <figure>
+    <img class="fig" src="{{ url_for('results_file', filename=m ~ '/' ~ f) }}" alt="{{ labels.get(m, m) }} {{ f.replace('_', ' ').replace('.png', '') }}">
+    <figcaption>{{ labels.get(m, m) }}: {{ f.replace('_', ' ').replace('.png', '') }}</figcaption>
+  </figure>
+  {% endfor %}
+  {% else %}
+  <div class="notice">No results yet. Run <code>python main.py train</code> and this page fills in automatically.</div>
+  {% endif %}
+</section>
+{% endblock %}

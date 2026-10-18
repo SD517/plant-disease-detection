@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}LeafCheck{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="{{ url_for('index') }}">
+      <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 27C5 13 14 5 28 4c1 14-6 23-19 23" fill="#2E7D4F"/><path d="M5 27C11 19 17 14 24 9" stroke="#F2F5F0" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>
+      LeafCheck
+    </a>
+    <nav aria-label="Main">
+      <a href="{{ url_for('index') }}" {% if request.endpoint == 'index' %}aria-current="page"{% endif %}>Diagnose</a>
+      <a href="{{ url_for('models_page') }}" {% if request.endpoint == 'models_page' %}aria-current="page"{% endif %}>Models</a>
+      <a href="{{ url_for('about') }}" {% if request.endpoint == 'about' %}aria-current="page"{% endif %}>About</a>
+    </nav>
+  </header>
+  <main>{% block content %}{% endblock %}</main>
+  <footer class="foot">
+    <p>Educational project. LeafCheck gives an automated estimate, not a professional diagnosis. Confirm serious cases with a local agricultural extension officer.</p>
+  </footer>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

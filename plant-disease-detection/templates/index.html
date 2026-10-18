@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}LeafCheck - Is this leaf healthy?{% endblock %}
+{% block content %}
+<section class="bench">
+  <div class="left">
+    <h1>Is this leaf healthy?</h1>
+    <p class="lede">Add a photo of a single leaf. LeafCheck names the crop, spots the disease if there is one, and shows which part of the leaf it looked at.</p>
+
+    {% if not models %}
+    <div class="notice" role="alert">
+      <strong>No trained model found.</strong>
+      Train one first with <code>python main.py train</code>, then restart this page.
+    </div>
+    {% endif %}
+
+    {% if models|length > 1 %}
+    <div class="seg" role="radiogroup" aria-label="Model">
+      {% for m in models %}
+      <label><input type="radio" name="model" value="{{ m }}" {% if loop.first %}checked{% endif %}><span>{{ labels[m] }}</span></label>
+      {% endfor %}
+    </div>
+    {% elif models %}
+    <input type="hidden" name="model" value="{{ models[0] }}">
+    {% endif %}
+
+    <div id="drop" class="drop" tabindex="0" role="button" aria-label="Add a leaf photo">
+      <svg class="veins" viewBox="0 0 200 200" aria-hidden="true"><path d="M30 175C30 85 85 28 172 24c4 88-40 148-122 151" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M30 175C70 120 110 80 150 48M78 130l30 4M100 104l34 2M62 150l-4-28M92 120l-6-30M118 94l-4-26" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <div class="drop-text">
+        <p><strong>Drop a leaf photo here</strong></p>
+        <p class="muted">or choose a file. JPG, PNG, up to {{ max_mb }} MB. A single leaf on a plain background works best.</p>
+        <div class="btns">
+          <button type="button" class="btn" id="pick">Choose photo</button>
+          <button type="button" class="btn ghost camera-only" id="snap">Take photo</button>
+        </div>
+      </div>
+      <div class="stage" id="stage" hidden>
+        <img id="photo" alt="Your uploaded leaf">
+        <img id="heat" alt="" aria-hidden="true">
+      </div>
+      <input id="file" type="file" accept="image/*" hidden>
+      <input id="cam" type="file" accept="image/*" capture="environment" hidden>
+    </div>
+
+    <div class="cam-control" id="camControl" hidden>
+      <label for="blend">What the model looked at</label>
+      <input id="blend" type="range" min="0" max="100" value="70" aria-describedby="blendHelp">
+      <span id="blendHelp" class="muted">Warm colours mark the areas that pushed the decision most.</span>
+    </div>
+  </div>
+
+  <div class="right" id="result" aria-live="polite">
+    <div class="empty" id="empty">
+      <h2>Your result appears here</h2>
+      <p class="muted">For the clearest answer, fill the frame with one leaf, keep it in focus and avoid strong shadows.</p>
+    </div>
+    <div class="loading" id="loading" hidden><div class="spin" aria-hidden="true"></div><p>Looking at the leaf...</p></div>
+    <div class="error" id="error" hidden role="alert"></div>
+
+    <article id="out" hidden>
+      <div class="status" id="status"></div>
+      <h2 id="title"></h2>
+      <p class="sub" id="sub"></p>
+      <div class="meter" aria-hidden="true"><div id="meterFill"></div></div>
+      <p class="conf"><span id="confText"></span> confident</p>
+      <p class="warn" id="warn" hidden>The model is not very sure about this one. Try a sharper photo of a single leaf in daylight.</p>
+
+      <h3>What it is</h3>
+      <p id="desc"></p>
+
+      <h3 id="adviceHead">What you can do</h3>
+      <ul id="advice"></ul>
+
+      <h3>Other possibilities</h3>
+      <ol class="top" id="top"></ol>
+      <p class="muted small" id="meta"></p>
+    </article>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/app.js') }}"></script>{% endblock %}

@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+data/raw/
+data/split/
+models/*.keras
+.venv/
+.DS_Store

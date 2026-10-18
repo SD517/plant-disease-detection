@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}LeafCheck - About{% endblock %}
+{% block content %}
+<section class="page prose">
+  <h1>How LeafCheck works</h1>
+  <p>LeafCheck uses <strong>transfer learning</strong>. A network that already learned general shapes, edges and textures from millions of ImageNet photos (MobileNetV2 or ResNet50) is adapted to recognise 38 crop and disease combinations from the PlantVillage dataset.</p>
+  <h2>Training in two steps</h2>
+  <p>First only the new classification layer is trained while the pre-trained layers stay frozen. Then the top layers of the backbone are unfrozen and fine-tuned with a very small learning rate so the model adapts without forgetting what it knows.</p>
+  <h2>Why the heat-map?</h2>
+  <p>The coloured overlay is a Grad-CAM map. It shows where the network found evidence for its answer. If the warm colours sit on the background instead of the leaf, do not trust the result.</p>
+  <h2>Limits you should know</h2>
+  <ul>
+    <li>PlantVillage photos were taken on plain backgrounds in controlled light. Field photos with soil, hands or other plants can be misread.</li>
+    <li>The model only knows 38 classes. A crop or disease outside that list will be forced into the closest one.</li>
+    <li>It does not check whether the picture is a leaf at all. Always read the confidence score.</li>
+    <li>Advice shown is general. Use it as a starting point and confirm with an expert.</li>
+  </ul>
+</section>
+{% endblock %}
